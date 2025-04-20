@@ -1,6 +1,13 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
   mysql:
     image: mysql:latest
     environment:
@@ -9,7 +16,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - app_network
+      - app-network
 
   jenkins:
     image: jenkins/jenkins:lts
@@ -19,12 +26,13 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
     networks:
-      - app_network
-    restart: unless-stopped
-
-networks:
-  app_network:
-    driver: bridge
+      - app-network
+    environment:
+      - JAVA_OPTS=-Dhudson.footerURL=http://your-company.com
 
 volumes:
   jenkins_home:
+
+networks:
+  app-network:
+    driver: bridge
