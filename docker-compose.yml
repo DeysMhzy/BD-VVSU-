@@ -8,3 +8,28 @@ services:
       MYSQL_DATABASE: mydatabase
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network  # Подключение к сети
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - app_network  # Подключение к сети
+
+volumes:
+  mysql_data:
+  jenkins_home:
+
+networks:
+  app_network:
+    name: app_network  # Фиксируем имя сети (без префикса проекта)
+    driver: bridge
